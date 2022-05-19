@@ -24,10 +24,10 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
         storageMaterialDao.insertStorageMaterial(storageMaterialData)
     }
 
-    //현재 재료 가져오기
+    //로컬디비에있는 해당되는 재료 가져오기
     fun getStorage(name : String) = storageMaterialDao.getStorage(name).asLiveData()
 
-    //현재 재료 가져오기
+    //로컬디비에있는 재료 가져오기
     fun getStorage() = storageMaterialDao.getStorage().asLiveData()
 
     //재료 가져오기 페이징
@@ -44,7 +44,7 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
 
 
     //검색한 내용이 서버에 없을때 서버에 추가
-    suspend fun setSearchMaterialData(search : String) : Response<SearchMaterialData> {
-        return service.setSearchMaterialData(search)
+    suspend fun setSearchMaterialData(type : Int , search : String) : Response<SearchMaterialData> {
+        return service.setSearchMaterialData(type, search)
     }
 }

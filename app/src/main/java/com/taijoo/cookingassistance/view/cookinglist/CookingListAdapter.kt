@@ -4,17 +4,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import com.taijoo.cookingassistance.data.model.CookingListData
+import com.taijoo.cookingassistance.data.model.CookingListResponse
 import com.taijoo.cookingassistance.databinding.ListItemTestBinding
 
-class CookingListAdapter : PagingDataAdapter<String , CookingListViewHolder>(CookingListDiffCallback()){
+class CookingListAdapter : PagingDataAdapter<CookingListData, CookingListViewHolder>(CookingListDiffCallback()){
 
-    private class CookingListDiffCallback : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
+    private class CookingListDiffCallback : DiffUtil.ItemCallback<CookingListData>() {
+
+        override fun areItemsTheSame(oldItem: CookingListData, newItem: CookingListData): Boolean {
+            return oldItem.seq == newItem.seq
         }
 
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
+        override fun areContentsTheSame(
+            oldItem: CookingListData,
+            newItem: CookingListData
+        ): Boolean {
+            return oldItem.seq == newItem.seq
         }
     }
 

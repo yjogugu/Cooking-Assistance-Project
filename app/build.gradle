@@ -80,4 +80,7 @@ dependencies {
     implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
     annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0'
+
+    //안드로이드12 추가된 스플래쉬 이슈 관련 api
+    implementation "androidx.core:core-splashscreen:1.0.0-beta02"
 }

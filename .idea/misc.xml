@@ -5,14 +5,17 @@
       <map>
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/activity_main.xml" value="0.31302083333333336" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/activity_search.xml" value="0.37552083333333336" />
+        <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/custom_category_dialog_layout.xml" value="0.3484375" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/custom_default_dialog_layout.xml" value="0.40729166666666666" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/fragment_cooking_list.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/fragment_storage_material.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/item_title_include.xml" value="0.459375" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/list_item_arrayadapter.xml" value="0.45606884057971014" />
+        <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/list_item_category.xml" value="0.3484375" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/list_item_material.xml" value="0.4904891304347826" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/list_item_search.xml" value="0.31302083333333336" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/list_item_test.xml" value="0.459375" />
+        <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/menu/main_menu.xml" value="0.2713541666666667" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/xml/network_security_config.xml" value="0.4005208333333333" />
       </map>
     </option>

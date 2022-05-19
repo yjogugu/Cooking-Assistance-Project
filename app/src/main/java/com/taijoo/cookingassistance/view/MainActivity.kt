@@ -3,7 +3,13 @@ package com.taijoo.cookingassistance.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
 import android.widget.TableLayout
+import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
@@ -13,6 +19,7 @@ import com.taijoo.cookingassistance.view.cookinglist.CookingListFragment
 import com.taijoo.cookingassistance.view.search.SearchActivity
 import com.taijoo.cookingassistance.view.storage_material.StorageMaterialFragment
 import dagger.hilt.android.AndroidEntryPoint
+import nl.joery.animatedbottombar.AnimatedBottomBar
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -20,17 +27,30 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding : ActivityMainBinding
     var fragmentList = ArrayList<Fragment>()
 
+    private val storageMaterialFragment = StorageMaterialFragment.newInstance()//보관중인 요리 재료
+    private val cookingListFragment = CookingListFragment.newInstance()//서버에서 받아온 요리레시피 프래그먼트
+
+    private lateinit var popup : PopupMenu
+
+    private val viewModel : MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        installSplashScreen()
 
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
 
         binding.apply {
-            fragmentList.add(StorageMaterialFragment.newInstance())//보관중인 요리 재료
-            fragmentList.add(CookingListFragment.newInstance())//요리 레시피
+            fragmentList.add(storageMaterialFragment)//보관중인 요리 재료
+            fragmentList.add(cookingListFragment)//요리 레시피
 
             lifecycleOwner = this@MainActivity
         }
+
+        popup = PopupMenu(this,binding.titleAppbar.tvSearch)
+        popup.inflate(R.menu.main_menu)
+
 
         binding.viewPager.adapter = MainAdapter(supportFragmentManager , lifecycle , fragmentList)
 
@@ -38,14 +58,42 @@ class MainActivity : AppCompatActivity() {
         viewPager()
 
         binding.titleAppbar.tvSearch.setOnClickListener {
-            startActivity(Intent(this,SearchActivity::class.java))
+            when(binding.bottomBar.selectedIndex){
+                0->{
+                    startActivity(Intent(this,SearchActivity::class.java))
+                }
+                1->{
+                    onPopupClick()
+                    popup.show()
+
+                }
+            }
         }
+
     }
 
     //뷰페이저 셋팅
     private fun viewPager(){
-        binding.bottomBar.addTab(binding.bottomBar.createTab(R.drawable.icon_call , getString(R.string.StorageMaterial)))
-        binding.bottomBar.addTab(binding.bottomBar.createTab(R.drawable.icon_call , getString(R.string.CookingList)))
+        binding.bottomBar.addTab(binding.bottomBar.createTab(R.drawable.icon_shopping , getString(R.string.StorageMaterial)))
+        binding.bottomBar.addTab(binding.bottomBar.createTab(R.drawable.icon_list , getString(R.string.CookingList)))
         binding.bottomBar.setupWithViewPager2(binding.viewPager)
+    }
+
+    //팝업 메뉴 클릭
+    private fun onPopupClick(){
+        popup.setOnMenuItemClickListener{ menuItem: MenuItem? ->
+            when(menuItem!!.itemId){
+                R.id.span_count_1->{//전체목록
+                    cookingListFragment.viewModel.type.value = 0
+                }
+                R.id.span_count_2->{//가능한목록
+                    cookingListFragment.viewModel.type.value = 1
+                }
+                R.id.span_count_3->{//검색
+                    cookingListFragment.viewModel.type.value = 2
+                }
+            }
+            true
+        }
     }
 }

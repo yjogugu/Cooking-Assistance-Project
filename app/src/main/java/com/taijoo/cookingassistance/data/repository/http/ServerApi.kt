@@ -1,11 +1,11 @@
 package com.taijoo.cookingassistance.data.repository.http
 
+import com.google.gson.GsonBuilder
+import com.taijoo.cookingassistance.data.model.CookingListResponse
 import com.taijoo.cookingassistance.data.model.SearchMaterialData
-import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,6 +19,8 @@ interface ServerApi {
         fun create(): ServerApi {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
+            val gson = GsonBuilder() .setLenient() .create()
+
             val client = OkHttpClient.Builder()
                 .addInterceptor(logger)
                 .build()
@@ -26,7 +28,7 @@ interface ServerApi {
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
                 .create(ServerApi::class.java)
         }
@@ -39,11 +41,17 @@ interface ServerApi {
 
     @FormUrlEncoded
     @POST("InsertMaterialList.php")
-    suspend fun setSearchMaterialData(@Field("search") search : String): Response<SearchMaterialData>
+    suspend fun setSearchMaterialData(@Field("type") type : Int , @Field("search") search : String): Response<SearchMaterialData>
 
 
-    @GET("test.php")
-    suspend fun test(@Query("page") page: Int,
-                     @Query("per_page") perPage: Int,): Response<ResponseBody>
+    //요리가능한 리스트
+    @FormUrlEncoded
+    @POST("SelectFoodList.php")
+    suspend fun getSelectFoodList(@Field("type") type : Int , @Field("seq") seq : Int, @Field("localData") localData : String): Response<CookingListResponse>
+
+    //전체 요리 리스트
+    @FormUrlEncoded
+    @POST("SelectFoodList.php")
+    suspend fun getSelectFoodList(@Field("type") type : Int , @Query("page") page : Int, @Query("per_page") per_page : Int): Response<CookingListResponse>
 
 }

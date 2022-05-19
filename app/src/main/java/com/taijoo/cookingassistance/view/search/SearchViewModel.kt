@@ -84,10 +84,10 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
 
 
     //서버에 재료 추가 하기
-    fun setMaterialList(search : String)  {
+    fun setMaterialList(type : Int,search : String)  {
         liveDataType = 0
         viewModelScope.launch {
-            val response = repository.setSearchMaterialData(search)
+            val response = repository.setSearchMaterialData(type,search)
 
             when(response.isSuccessful){
                 true ->{

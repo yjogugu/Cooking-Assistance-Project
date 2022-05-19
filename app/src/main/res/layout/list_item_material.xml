@@ -24,7 +24,7 @@
             android:textColor="@color/color_000000"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:text="@{Long.toString(storageMaterialData.seq)}"
+            android:text="@{storageMaterialData.name}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

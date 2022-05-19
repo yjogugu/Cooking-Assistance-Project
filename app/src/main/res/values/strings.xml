@@ -13,4 +13,11 @@
 
     <string name="dialog_title1">재료 추가</string>
     <string name="dialog_content1">서버에 등록되지않은 재료입니다 추가하시겠습니까?</string>
+
+
+    <string name="menu_content1">전체 목록</string>
+    <string name="menu_content2">가능한 목록</string>
+    <string name="menu_content3">검색</string>
+
+    <string name="category_dialog1">카테고리 선택</string>
 </resources>

@@ -19,9 +19,11 @@
             android:name=".view.search.SearchActivity"
             android:exported="false"
             android:screenOrientation="portrait"
+            android:theme="@style/Theme.CookingAssistance"
             android:windowSoftInputMode="stateVisible"/>
         <activity
             android:name=".view.MainActivity"
+            android:theme="@style/Theme.App.Starting"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

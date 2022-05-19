@@ -104,21 +104,7 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
 
                 viewModel.getStorage(binding.autoTextView.text.toString()).observe(this){
                     if(it.isEmpty()){//데이터가 없으면 데이터를 추가할지 묻는다
-                        val customDefaultDialog : CustomDefaultDialog = CustomDefaultDialog(this , getString(R.string.dialog_title1) , getString(R.string.dialog_content1))
-
-                        customDefaultDialog.setDialogListener(object : CustomDefaultDialog.CustomDialogListener{
-                            override fun onCheckClick() {
-                                viewModel.setMaterialList(binding.autoTextView.text.toString())
-
-                            }
-
-                            override fun onNoClick() {
-
-                            }
-
-                        })
-
-                        customDefaultDialog.show()
+                        setDefaultDialog()
                     }
                     else{
                         viewModel.setAdapterData(binding.autoTextView.text.toString() , it)
@@ -138,5 +124,24 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
     //검색한 내용 갯수 카운트
     override fun onItemClick(item : StorageMaterialData) {
         viewModel.setStorage(item)
+    }
+
+    //서버에 재료가 없는경우 서버에 추가할지의 여부 물어보기
+    private fun setDefaultDialog(){
+        val customDefaultDialog : CustomDefaultDialog = CustomDefaultDialog(this , getString(R.string.dialog_title1) , getString(R.string.dialog_content1))
+
+        customDefaultDialog.setDialogListener(object : CustomDefaultDialog.CustomDialogListener{
+            override fun onCheckClick() {
+                viewModel.setMaterialList(0,binding.autoTextView.text.toString())
+
+            }
+
+            override fun onNoClick() {
+
+            }
+
+        })
+
+        customDefaultDialog.show()
     }
 }

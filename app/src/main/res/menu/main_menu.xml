@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/span_count_1"
+        android:title="@string/menu_content1"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/span_count_2"
+        android:title="@string/menu_content2"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/span_count_3"
+        android:title="@string/menu_content3"
+        app:showAsAction="never">
+    </item>
+</menu>
