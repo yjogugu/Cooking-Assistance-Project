@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
-import com.taijoo.cookingassistance.databinding.ListItemTestBinding
+
 
 class StorageMaterialAdapter : PagingDataAdapter<StorageMaterialData , RecyclerView.ViewHolder>(DIFF) {
 

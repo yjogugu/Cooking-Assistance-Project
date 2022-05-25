@@ -21,6 +21,7 @@ class CookingRepository @Inject constructor(private val storageMaterialDao : Sto
     fun getStorageName() = storageMaterialDao.getStorageName().asLiveData()
 
 
+    //서버에서 요리리스트 가져오기
     fun getSelectFoodList(type : Int , localData : String) : Flow<PagingData<CookingListData>>{
         return Pager(
             config = PagingConfig(enablePlaceholders = false, pageSize = 10 ),

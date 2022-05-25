@@ -2,7 +2,9 @@ package com.taijoo.cookingassistance.data.repository.http
 
 import com.google.gson.GsonBuilder
 import com.taijoo.cookingassistance.data.model.CookingListResponse
+import com.taijoo.cookingassistance.data.model.SearchCategoryResponse
 import com.taijoo.cookingassistance.data.model.SearchMaterialData
+import com.taijoo.cookingassistance.util.IP
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,7 +16,7 @@ import retrofit2.http.*
 interface ServerApi {
 
     companion object {
-        private const val BASE_URL = "https://yjo0909.cafe24.com/RestfulApi/"
+        private const val BASE_URL = IP.SERVER_IP+"RestfulApi/"
 
         fun create(): ServerApi {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
@@ -35,10 +37,12 @@ interface ServerApi {
     }
 
 
+    //검색 데이터 가져오기
     @GET("SelectMaterialList.php")
     suspend fun getSearchMaterialData(@Query("search") search : String): Response<SearchMaterialData>
 
 
+    //서버에 없는 재료 넣기
     @FormUrlEncoded
     @POST("InsertMaterialList.php")
     suspend fun setSearchMaterialData(@Field("type") type : Int , @Field("search") search : String): Response<SearchMaterialData>
@@ -53,5 +57,10 @@ interface ServerApi {
     @FormUrlEncoded
     @POST("SelectFoodList.php")
     suspend fun getSelectFoodList(@Field("type") type : Int , @Query("page") page : Int, @Query("per_page") per_page : Int): Response<CookingListResponse>
+
+    //재료 카테고리 가져오기
+    @FormUrlEncoded
+    @POST("SelectCategory.php")
+    suspend fun getSelectCategory(@Field("request") request : String): Response<SearchCategoryResponse>
 
 }

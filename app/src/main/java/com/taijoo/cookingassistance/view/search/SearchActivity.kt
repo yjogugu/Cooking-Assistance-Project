@@ -12,6 +12,7 @@ import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.databinding.ActivitySearchBinding
 import com.taijoo.cookingassistance.util.CustomAutoCompleteAdapter
+import com.taijoo.cookingassistance.util.CustomCategoryDialog
 import com.taijoo.cookingassistance.util.CustomDefaultDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -85,6 +86,9 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
     }
 
     private fun init(){
+
+        viewModel.getSearchCategory()
+
         binding.searchList.layoutManager = LinearLayoutManager(this)
         adapter = SearchAdapter(this)
         binding.searchList.adapter = adapter
@@ -128,11 +132,11 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
 
     //서버에 재료가 없는경우 서버에 추가할지의 여부 물어보기
     private fun setDefaultDialog(){
-        val customDefaultDialog : CustomDefaultDialog = CustomDefaultDialog(this , getString(R.string.dialog_title1) , getString(R.string.dialog_content1))
+        val customDefaultDialog = CustomDefaultDialog(this , getString(R.string.dialog_title1) , getString(R.string.dialog_content1))
 
         customDefaultDialog.setDialogListener(object : CustomDefaultDialog.CustomDialogListener{
             override fun onCheckClick() {
-                viewModel.setMaterialList(0,binding.autoTextView.text.toString())
+                setCategorySelect()
 
             }
 
@@ -143,5 +147,22 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
         })
 
         customDefaultDialog.show()
+    }
+
+    private fun setCategorySelect(){
+        val customCategoryDialog = CustomCategoryDialog(this@SearchActivity,viewModel.categoryItem)
+        customCategoryDialog.setOnCategoryListener(object : CustomCategoryDialog.CustomCategoryDialogListener{
+            override fun onOkClick(type: Int) {
+                if(type != -1){
+                    viewModel.setMaterialList(viewModel.categoryItem[type].type,binding.autoTextView.text.toString())
+                }
+            }
+
+            override fun onNoClick() {
+
+            }
+
+        })
+        customCategoryDialog.show()
     }
 }

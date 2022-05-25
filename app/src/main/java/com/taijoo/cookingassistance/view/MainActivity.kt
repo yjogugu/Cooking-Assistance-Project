@@ -5,21 +5,22 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import android.widget.PopupMenu
-import android.widget.TableLayout
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.lifecycle.lifecycleScope
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.databinding.ActivityMainBinding
+import com.taijoo.cookingassistance.util.NetworkState
 import com.taijoo.cookingassistance.view.cookinglist.CookingListFragment
 import com.taijoo.cookingassistance.view.search.SearchActivity
 import com.taijoo.cookingassistance.view.storage_material.StorageMaterialFragment
 import dagger.hilt.android.AndroidEntryPoint
-import nl.joery.animatedbottombar.AnimatedBottomBar
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -70,6 +71,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //네트워크 연결 체크
+        lifecycleScope.launch {
+            viewModel.networkState.collect {
+                if(NetworkState.NotConnected == it){
+                    Log.e("여기","연결")
+                }
+            }
+
+        }
     }
 
     //뷰페이저 셋팅
@@ -96,4 +106,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
     }
+
+
 }
+

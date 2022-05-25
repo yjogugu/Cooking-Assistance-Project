@@ -35,22 +35,21 @@
                     android:textStyle="bold"
                     android:text="@string/category_dialog1"/>
 
-                <androidx.recyclerview.widget.RecyclerView
+
+                <Spinner
+                    android:id="@+id/spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:orientation="horizontal"
-                    tools:listitem="@layout/list_item_category"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"/>
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"
                     android:gravity="end">
 
                     <TextView

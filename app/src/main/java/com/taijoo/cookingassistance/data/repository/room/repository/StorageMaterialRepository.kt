@@ -4,6 +4,7 @@ import androidx.lifecycle.asLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.taijoo.cookingassistance.data.model.SearchCategoryResponse
 import com.taijoo.cookingassistance.data.model.SearchMaterialData
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.data.repository.http.ServerApi
@@ -46,5 +47,10 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
     //검색한 내용이 서버에 없을때 서버에 추가
     suspend fun setSearchMaterialData(type : Int , search : String) : Response<SearchMaterialData> {
         return service.setSearchMaterialData(type, search)
+    }
+
+    //카테고리 가져오기
+    suspend fun getSearchCategory(request : String) : Response<SearchCategoryResponse> {
+        return service.getSelectCategory(request)
     }
 }

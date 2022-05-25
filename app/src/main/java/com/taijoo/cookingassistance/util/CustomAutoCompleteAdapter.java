@@ -1,7 +1,7 @@
 package com.taijoo.cookingassistance.util;
 
 import android.content.Context;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.taijoo.cookingassistance.R;
 import com.taijoo.cookingassistance.data.model.MaterialData;
-import com.taijoo.cookingassistance.data.model.SearchMaterialData;
-import com.taijoo.cookingassistance.data.model.StorageMaterialData;
+
 
 import java.util.ArrayList;
 import java.util.List;

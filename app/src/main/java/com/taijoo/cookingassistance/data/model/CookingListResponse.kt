@@ -10,4 +10,5 @@ data class CookingListResult(@field:SerializedName("result") val result : Boolea
                            @field:SerializedName("data") var data : List<CookingListData>)
 
 data class CookingListData(@field:SerializedName("seq") val seq : Int ,
-                           @field:SerializedName("name") var name : String)
+                           @field:SerializedName("name") var name : String,
+                           @field:SerializedName("img") var img : String)

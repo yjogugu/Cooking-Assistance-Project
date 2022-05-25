@@ -3,6 +3,7 @@ package com.taijoo.cookingassistance.view.search
 import android.util.Log
 import androidx.lifecycle.*
 import com.taijoo.cookingassistance.data.model.MaterialData
+import com.taijoo.cookingassistance.data.model.SearchCategoryData
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.data.repository.room.repository.StorageMaterialRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,8 +34,15 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
     lateinit var storage : LiveData<List<StorageMaterialData>>//로컬디비 데이터
 
 
-    val TAG = "SearchViewModel"
+    lateinit var categoryItem : List<SearchCategoryData>
 
+
+    private var _serverCheck = MutableLiveData<List<Boolean>>()//서버통신 여부
+    val serverCheck : LiveData<List<Boolean>> get() = _serverCheck
+
+    companion object{
+        const val TAG = "SearchViewModel"
+    }
 
     init {
         val list = ArrayList<MaterialData>()
@@ -122,18 +130,34 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
         }
 
         //로컬디비에 있는 재료 갯수 가져와서 적용
-        for(j in 0 until list.size){
+        for (listItem in list){
             if(!list.isNullOrEmpty()){
-                for(p in roomData.indices){
-                    if(list[j].seq == roomData[p].seq){
-                        list[j].size = roomData[p].size
+                for (j in roomData.indices){
+                    if(listItem.seq == roomData[j].seq){
+                        listItem.size = roomData[j].size
                     }
                 }
             }
         }
-
         _listItem.value = list
 
+    }
+
+    //카테고리 가져오기
+    fun getSearchCategory(){
+        viewModelScope.launch {
+            val response = repository.getSearchCategory("category")
+
+            when(response.isSuccessful){
+                true ->{
+                    categoryItem = response.body()!!.data.data
+
+                }
+                false ->{
+
+                }
+            }
+        }
 
     }
 

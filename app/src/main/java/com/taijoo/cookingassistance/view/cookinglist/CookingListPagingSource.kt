@@ -22,22 +22,19 @@ class CookingListPagingSource(private val service : ServerApi,private val type :
 
         var items : Response<CookingListResponse>? = null
 
-        Log.e("여기","11ㅇㅇ"+type)
         when (type) {
             0 -> {
-                Log.e("여기","22ㅇㅇ"+type)
                 SEQ = 0
                 items = service.getSelectFoodList(type,position,params.loadSize)
             }
             1 -> {
-                Log.e("여기","33ㅇㅇ"+type)
                 if(position != 1){
                     SEQ += 50
                 }
                 items = service.getSelectFoodList(type,SEQ,localData)
             }
             else -> {
-                Log.e("여기","44ㅇㅇ"+type)
+
             }
         }
 

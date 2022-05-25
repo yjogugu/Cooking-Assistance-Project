@@ -4,24 +4,27 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taijoo.cookingassistance.data.repository.room.database.UserDB
+import com.taijoo.cookingassistance.util.NetworkChecker
+import com.taijoo.cookingassistance.util.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel(){
+class MainViewModel @Inject constructor(private val networkChecker: NetworkChecker) : ViewModel(){
 
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading = _isLoading.asStateFlow()
+    private val _networkState = MutableSharedFlow<NetworkState>(replay = 1)
+    val networkState: SharedFlow<NetworkState> = _networkState
+
 
     init {
-//        viewModelScope.launch {
-//            delay(1000)
-//            _isLoading.value = false
-//        }
+        viewModelScope.launch {
+            networkChecker.networkState.collectLatest {
+                _networkState.emit(it)
+            }
+        }
     }
 }
