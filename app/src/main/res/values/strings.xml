@@ -20,4 +20,6 @@
     <string name="menu_content3">검색</string>
 
     <string name="category_dialog1">카테고리 선택</string>
+
+    <string name="network_check">네트워크가 끊겼습니다.\n네트워크 확인바랍니다.</string>
 </resources>

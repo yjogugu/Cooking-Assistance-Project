@@ -6,7 +6,10 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
@@ -14,7 +17,13 @@ import com.taijoo.cookingassistance.databinding.ActivitySearchBinding
 import com.taijoo.cookingassistance.util.CustomAutoCompleteAdapter
 import com.taijoo.cookingassistance.util.CustomCategoryDialog
 import com.taijoo.cookingassistance.util.CustomDefaultDialog
+import com.taijoo.cookingassistance.util.NetworkState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -87,6 +96,7 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
 
     private fun init(){
 
+        //카테고리 가져오기
         viewModel.getSearchCategory()
 
         binding.searchList.layoutManager = LinearLayoutManager(this)
@@ -123,6 +133,21 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
             return@setOnEditorActionListener false
         }
 
+
+        lifecycleScope.launch {
+
+            viewModel.networkState.collect {
+                if(it == NetworkState.NotConnected){
+                    Snackbar
+                        .make(binding.constraint, getString(R.string.network_check), 5000)
+                        .setBackgroundTint(getColor(R.color.color_Dark333333))
+                        .setTextColor(getColor(R.color.color_DarkFFFFFF))
+                        .setActionTextColor(getColor(R.color.color_DarkFFFFFF))
+                        .setAction("확인"){}.show()
+                }
+            }
+        }
+
     }
 
     //검색한 내용 갯수 카운트
@@ -136,7 +161,19 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
 
         customDefaultDialog.setDialogListener(object : CustomDefaultDialog.CustomDialogListener{
             override fun onCheckClick() {
-                setCategorySelect()
+
+                if (viewModel.networkCheck){
+                    setCategorySelect()
+                }
+                else{
+                    Snackbar
+                        .make(binding.constraint, getString(R.string.network_check), 5000)
+                        .setBackgroundTint(getColor(R.color.color_Dark333333))
+                        .setTextColor(getColor(R.color.color_DarkFFFFFF))
+                        .setActionTextColor(getColor(R.color.color_DarkFFFFFF))
+                        .setAction("확인"){}.show()
+                }
+
 
             }
 
@@ -149,6 +186,7 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
         customDefaultDialog.show()
     }
 
+    //카테고리 선택후 서버 db에 저장
     private fun setCategorySelect(){
         val customCategoryDialog = CustomCategoryDialog(this@SearchActivity,viewModel.categoryItem)
         customCategoryDialog.setOnCategoryListener(object : CustomCategoryDialog.CustomCategoryDialogListener{

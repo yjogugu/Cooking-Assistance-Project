@@ -79,5 +79,6 @@
 
 
     <color name="color_Dark000000">#000000</color>
-
+    <color name="color_Dark333333">#333333</color>
+    <color name="color_DarkFFFFFF">#FFFFFF</color>
 </resources>

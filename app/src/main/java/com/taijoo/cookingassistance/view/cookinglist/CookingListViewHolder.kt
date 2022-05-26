@@ -26,7 +26,6 @@ class CookingListViewHolder(private val binding : ListItemCookingBinding) : Recy
         }
 
         binding.constraint.setOnClickListener { view->
-            Log.e("여기","ㅇㅇ"+data.img)
             onItemClickListener.onItemClick(view, data)
         }
 

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 @Dao
 interface StorageMaterialDao {
@@ -22,7 +23,7 @@ interface StorageMaterialDao {
     fun getStorage(): Flow<List<StorageMaterialData>>
 
     //추천 데이터용 재료 이름만 가져오기
-    @Query("SELECT name FROM StorageMaterial WHERE type = 0 ORDER BY seq")
+    @Query("SELECT name FROM StorageMaterial WHERE type  IN (0,1) ORDER BY seq")
     fun getStorageName(): Flow<List<String>>
 
 

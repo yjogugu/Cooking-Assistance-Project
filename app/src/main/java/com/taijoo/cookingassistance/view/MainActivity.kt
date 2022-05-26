@@ -1,6 +1,7 @@
 package com.taijoo.cookingassistance.view
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.databinding.ActivityMainBinding
 import com.taijoo.cookingassistance.util.NetworkState
@@ -75,7 +77,12 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.networkState.collect {
                 if(NetworkState.NotConnected == it){
-                    Log.e("여기","연결")
+                    Snackbar
+                        .make(binding.constraint, getString(R.string.network_check), 5000)
+                        .setBackgroundTint(getColor(R.color.color_Dark333333))
+                        .setTextColor(getColor(R.color.color_DarkFFFFFF))
+                        .setActionTextColor(getColor(R.color.color_DarkFFFFFF))
+                        .setAction("확인"){}.show()
                 }
             }
 

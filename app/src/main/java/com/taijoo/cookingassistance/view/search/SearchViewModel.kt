@@ -6,21 +6,22 @@ import com.taijoo.cookingassistance.data.model.MaterialData
 import com.taijoo.cookingassistance.data.model.SearchCategoryData
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.data.repository.room.repository.StorageMaterialRepository
+import com.taijoo.cookingassistance.util.NetworkChecker
+import com.taijoo.cookingassistance.util.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okio.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(private val repository: StorageMaterialRepository) : ViewModel() {
+class SearchViewModel @Inject constructor(private val repository: StorageMaterialRepository , private val networkChecker: NetworkChecker) : ViewModel() {
 
-    var liveDataType = 0
 
     private var _item = MutableLiveData<List<MaterialData>>()//서버에서 받아올 식재품 목록
     val item : LiveData<List<MaterialData>> get() = _item//서버에서 받아올 식재품 목록
@@ -34,11 +35,13 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
     lateinit var storage : LiveData<List<StorageMaterialData>>//로컬디비 데이터
 
 
-    lateinit var categoryItem : List<SearchCategoryData>
+    lateinit var categoryItem : List<SearchCategoryData>//카테고리 아이템
 
 
-    private var _serverCheck = MutableLiveData<List<Boolean>>()//서버통신 여부
-    val serverCheck : LiveData<List<Boolean>> get() = _serverCheck
+    private val _networkState = MutableSharedFlow<NetworkState>(replay = 1)
+    val networkState: SharedFlow<NetworkState> get() = _networkState//네트워크 체크용
+
+    var networkCheck: Boolean = false//네트워크 체크용2
 
     companion object{
         const val TAG = "SearchViewModel"
@@ -48,6 +51,13 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
         val list = ArrayList<MaterialData>()
         list.add(MaterialData(0,"",0,""))
         _item.value = list
+
+        viewModelScope.launch {
+            networkChecker.networkState.collectLatest {
+                networkCheck = it == NetworkState.Connected
+                _networkState.emit(it)
+            }
+        }
     }
 
     //Room 에서 입력한 키워드 값 가져오기
@@ -59,9 +69,8 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
     }
 
 
-    //재료 저장
+    //Room 에 재료 저장
     fun setStorage(storageMaterialData : StorageMaterialData){
-        liveDataType = 1
 
         viewModelScope.launch {
             withContext(Dispatchers.IO){
@@ -76,16 +85,25 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
     //서버에서 검색 리스트 재료 가져오기
     fun getMaterialList(search : String){
         viewModelScope.launch {
-            val response = repository.getMaterialList(search)
+            try {
+                val response = repository.getMaterialList(search)
 
-            when(response.isSuccessful){
-                true->{
-                    _item.value = response.body()!!.response.data
-                }
-                false->{
-                    Log.e(TAG,"getMaterialList false")
+                when(response.isSuccessful){
+                    true->{
+                        _item.value = response.body()!!.response.data
+                    }
+                    false->{
+                        Log.e(TAG,"getMaterialList false")
+                    }
                 }
             }
+            catch (e : IOException){
+                Log.e(TAG,e.message.toString())
+            }
+            catch (e : Exception){
+                Log.e(TAG,e.message.toString())
+            }
+
         }
 
     }
@@ -93,24 +111,32 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
 
     //서버에 재료 추가 하기
     fun setMaterialList(type : Int,search : String)  {
-        liveDataType = 0
         viewModelScope.launch {
-            val response = repository.setSearchMaterialData(type,search)
+            try {
+                val response = repository.setSearchMaterialData(type,search)
 
-            when(response.isSuccessful){
-                true ->{
-                    val item = ArrayList<StorageMaterialData>()
-                    item.add(StorageMaterialData(response.body()!!.response.data[0].seq.toLong(),search,0,0,
-                        SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
+                when(response.isSuccessful){
+                    true ->{
+                        val item = ArrayList<StorageMaterialData>()
+                        item.add(StorageMaterialData(response.body()!!.response.data[0].seq.toLong(),search,0,0,
+                            "0000-00-00" , SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
 
-                    _listItem.value = item
+                        _listItem.value = item
+
+                    }
+                    false ->{
+                        Log.e(TAG,"setMaterialList false")
+                    }
 
                 }
-                false ->{
-                    Log.e(TAG,"setMaterialList false")
-                }
-
             }
+            catch (e : IOException){
+                Log.e(TAG,e.message.toString())
+            }
+            catch (e : Exception){
+                Log.e(TAG,e.message.toString())
+            }
+
         }
     }
 
@@ -124,7 +150,7 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
 
                 list.add(StorageMaterialData(
                     item.value!![j].seq.toLong() , item.value!![j].name , 0 ,item.value!![j].type
-                    , SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
+                    ,"0000-00-00", SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
 
             }
         }
@@ -146,17 +172,26 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
     //카테고리 가져오기
     fun getSearchCategory(){
         viewModelScope.launch {
-            val response = repository.getSearchCategory("category")
+            try {
+                val response = repository.getSearchCategory("category")
 
-            when(response.isSuccessful){
-                true ->{
-                    categoryItem = response.body()!!.data.data
+                when(response.isSuccessful){
+                    true ->{
+                        categoryItem = response.body()!!.data.data
 
-                }
-                false ->{
+                    }
+                    false ->{
 
+                    }
                 }
             }
+            catch (e : IOException){
+                Log.e(TAG,e.message.toString())
+            }
+            catch (e : Exception){
+                Log.e(TAG,e.message.toString())
+            }
+
         }
 
     }

@@ -6,6 +6,8 @@ import androidx.paging.PagingState
 import com.taijoo.cookingassistance.data.model.CookingListData
 import com.taijoo.cookingassistance.data.model.CookingListResponse
 import com.taijoo.cookingassistance.data.repository.http.ServerApi
+import com.taijoo.cookingassistance.util.NetworkState
+import okio.IOException
 import retrofit2.Response
 
 class CookingListPagingSource(private val service : ServerApi,private val type : Int, private val localData : String) : PagingSource<Int , CookingListData>() {
@@ -22,28 +24,26 @@ class CookingListPagingSource(private val service : ServerApi,private val type :
 
         var items : Response<CookingListResponse>? = null
 
-        when (type) {
-            0 -> {
-                SEQ = 0
-                items = service.getSelectFoodList(type,position,params.loadSize)
-            }
-            1 -> {
-                if(position != 1){
-                    SEQ += 50
+        try {
+            when (type) {
+                0 -> {//전체
+                    SEQ = 0
+                    items = service.getSelectFoodList(type,position,params.loadSize)
+
                 }
-                items = service.getSelectFoodList(type,SEQ,localData)
+                1 -> {//요리가능한 목록
+                    if(position != 1){
+                        SEQ += 50
+                    }
+                    items = service.getSelectFoodList(type,SEQ,localData)
+                }
+                else -> {
+
+                }
             }
-            else -> {
+            val cookingListData = items?.body()!!.data.data
 
-            }
-        }
-
-
-        val cookingListData = items?.body()!!.data.data
-
-
-        return try {
-            if(type == 0){
+            return  if(type == 0){
                 LoadResult.Page(
                     data = cookingListData,
                     prevKey = if (position == INIT_PAGE_INDEX) null else position - 1,
@@ -57,11 +57,15 @@ class CookingListPagingSource(private val service : ServerApi,private val type :
                     nextKey = if (cookingListData.isEmpty()) null else position + 1
                 )
             }
-
-
-        } catch (e: Exception) {
+        }
+        catch (e : IOException){
             return LoadResult.Error(e)
         }
+        catch (e: Exception) {
+            return LoadResult.Error(e)
+        }
+
+
     }
 
     override fun getRefreshKey(state: PagingState<Int, CookingListData>): Int? {

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.data.repository.room.dao.StorageMaterialDao
 
-@Database(entities = [StorageMaterialData::class] , version = 1 , exportSchema = false)
+@Database(entities = [StorageMaterialData::class] , version = 2 , exportSchema = false)
 
 abstract class UserDB : RoomDatabase(){
 

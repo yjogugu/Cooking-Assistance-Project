@@ -12,6 +12,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.search.SearchActivity">
@@ -36,7 +37,6 @@
             android:id="@+id/search_List"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/color_1B1B1B"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/autoTextView" />
 

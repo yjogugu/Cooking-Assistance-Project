@@ -106,7 +106,7 @@
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{storageMaterialData.date}"
+                    android:text="@{storageMaterialData.expiration_date}"
                     android:textColor="@color/color_000000"
                     android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
