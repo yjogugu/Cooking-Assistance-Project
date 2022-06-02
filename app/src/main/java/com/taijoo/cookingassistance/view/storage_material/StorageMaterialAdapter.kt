@@ -10,7 +10,7 @@ import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 
 
-class StorageMaterialAdapter : PagingDataAdapter<StorageMaterialData , RecyclerView.ViewHolder>(DIFF) {
+class StorageMaterialAdapter(private val storageMaterialInterface : StorageMaterialInterface) : PagingDataAdapter<StorageMaterialData , RecyclerView.ViewHolder>(DIFF) {
 
     companion object {
         private val DIFF = object: DiffUtil.ItemCallback<StorageMaterialData>() {
@@ -26,7 +26,7 @@ class StorageMaterialAdapter : PagingDataAdapter<StorageMaterialData , RecyclerV
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return StorageMaterialViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.list_item_material , parent , false))
+        return StorageMaterialViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.list_item_material , parent , false),storageMaterialInterface)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

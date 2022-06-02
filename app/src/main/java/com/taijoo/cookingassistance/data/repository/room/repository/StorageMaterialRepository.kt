@@ -10,7 +10,9 @@ import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.data.repository.http.ServerApi
 import com.taijoo.cookingassistance.data.repository.room.dao.StorageMaterialDao
 import com.taijoo.cookingassistance.view.storage_material.StorageMaterialPagingSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -25,11 +27,15 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
         storageMaterialDao.insertStorageMaterial(storageMaterialData)
     }
 
+    suspend fun updateDate(seq : Long , date : String){
+        storageMaterialDao.setUpdateDate(seq, date)
+    }
+
     //로컬디비에있는 해당되는 재료 가져오기
-    fun getStorage(name : String) = storageMaterialDao.getStorage(name).asLiveData()
+    fun getStorage(name : String) = storageMaterialDao.getStorage(name).flowOn(Dispatchers.IO)
 
     //로컬디비에있는 재료 가져오기
-    fun getStorage() = storageMaterialDao.getStorage().asLiveData()
+    fun getStorage() = storageMaterialDao.getStorage().flowOn(Dispatchers.IO)
 
     //재료 가져오기 페이징
     fun getPagingStorage() : Flow<PagingData<StorageMaterialData>>{

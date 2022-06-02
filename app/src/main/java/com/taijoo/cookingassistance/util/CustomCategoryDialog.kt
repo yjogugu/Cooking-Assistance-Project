@@ -15,7 +15,7 @@ import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.data.model.SearchCategoryData
 import com.taijoo.cookingassistance.databinding.CustomCategoryDialogLayoutBinding
 
-class CustomCategoryDialog(val activity: Activity , val item : List<SearchCategoryData>) : Dialog(activity) {
+class CustomCategoryDialog(private val activity: Activity , private val item : List<SearchCategoryData>) : Dialog(activity) {
 
     private lateinit var binding : CustomCategoryDialogLayoutBinding
     private lateinit var customCategoryDialogListener : CustomCategoryDialogListener

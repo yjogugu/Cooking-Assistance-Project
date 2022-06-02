@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.databinding.FragmentStorageMaterialBinding
+import com.taijoo.cookingassistance.util.CustomCategoryDialog
+import com.taijoo.cookingassistance.util.CustomDateDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,11 +32,11 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class StorageMaterialFragment : Fragment() {
+class StorageMaterialFragment : Fragment(),StorageMaterialInterface {
 
     private lateinit var binding : FragmentStorageMaterialBinding
 
-    private lateinit var adapter : StorageMaterialAdapter
+    private val adapter : StorageMaterialAdapter = StorageMaterialAdapter(this)
 
     private val viewModel : StorageMaterialViewModel by viewModels()
 
@@ -48,32 +50,58 @@ class StorageMaterialFragment : Fragment() {
 
         binding.storageList.setHasFixedSize(true)
         binding.storageList.layoutManager = LinearLayoutManager(context)
-        adapter = StorageMaterialAdapter()
         binding.storageList.adapter = adapter
 
         getData()
 
-        //재료 LiveData 로 변경사항이 있는지 확인
-        viewModel.storage.observe(viewLifecycleOwner){
-            //변경사항이 있으면 리사이클러뷰 새로고침
-            adapter.refresh()
-        }
+        getObserve()
 
         return binding.root
     }
 
+    // 재료에 변경사항이 있는지 확인
+    private fun getObserve(){
+        lifecycleScope.launch {
+            viewModel.storage.collect {
+                if(it.isNotEmpty()){
+                    adapter.refresh()
+                }
+            }
+        }
+    }
 
+    //페이징 데이터
     private fun getData(){
         lifecycleScope.launch {
-            viewModel.getPagingData().collectLatest {
+            viewModel.pagingData.collectLatest {
                 adapter.submitData(it)
             }
         }
 
     }
 
-
     companion object {
         fun newInstance() = StorageMaterialFragment()
     }
+
+    //리사이클러뷰 아이템 클릭
+    override fun itemClick(item : StorageMaterialData) {
+        val customDateDialog = CustomDateDialog(requireActivity())
+
+        customDateDialog.setOnClickListener(object : CustomDateDialog.CustomCategoryDialogListener{
+            override fun onOkClick(date : String) {
+                item.expiration_date = date
+                viewModel.setDate(item)
+            }
+
+            override fun onNoClick() {
+
+            }
+
+        })
+
+        customDateDialog.show()
+
+    }
+
 }

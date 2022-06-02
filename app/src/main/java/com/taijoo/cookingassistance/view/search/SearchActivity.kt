@@ -6,8 +6,10 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -20,7 +22,9 @@ import com.taijoo.cookingassistance.util.CustomDefaultDialog
 import com.taijoo.cookingassistance.util.NetworkState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -51,44 +55,26 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
             lifecycleOwner = this@SearchActivity
         }
 
-        suggestAdapter = CustomAutoCompleteAdapter(this, viewModel.item.value!!)
+        suggestAdapter = CustomAutoCompleteAdapter(this, viewModel.item.value)
         binding.autoTextView.setAdapter(suggestAdapter)
         binding.autoTextView.isFocusableInTouchMode = true
         binding.autoTextView.requestFocus()
 
-
-        //검색 리스트 보여주기
-        viewModel.item.observe(this){
-            if(suggestAdapter == null){
-                suggestAdapter = CustomAutoCompleteAdapter(this, it)
-                binding.autoTextView.setAdapter(suggestAdapter)
-            }
-            else{
-                suggestAdapter!!.addAll(it)
-                binding.autoTextView.setAdapter(suggestAdapter)
-            }
-
-
-        }
-
-
-        //서버에서 데이터 가져오기
-        viewModel.search.observe(this){
-            if(!it.equals("")){
-                viewModel.getMaterialList(it)
-            }
-
-        }
-
         //리사이클러뷰 아이템 뿌려주기
-        viewModel.listItem.observe(this){
+        viewModel.listItem.observe(this@SearchActivity){
             if(it.isNotEmpty()){
                 adapter.setData(it)
             }
 
         }
 
+        //서버에서 데이터 가져오기
+        viewModel.search.observe(this@SearchActivity){
+            if(it != ""){
+                viewModel.getMaterialList(it)
+            }
 
+        }
 
         init()
 
@@ -104,28 +90,32 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
         binding.searchList.adapter = adapter
 
 
+        //아이템 눌렀을때
         binding.autoTextView.setOnItemClickListener { adapterView, view, i, l ->
-
-            viewModel.getStorage(binding.autoTextView.text.toString()).observe(this){
-                viewModel.setAdapterData(binding.autoTextView.text.toString() , it)
+            lifecycleScope.launch {
+                viewModel.getStorage(binding.autoTextView.text.toString()).collectLatest {
+                    viewModel.setAdapterData(binding.autoTextView.text.toString() , it)
+                }
             }
-
         }
 
 
+        //키보드 완료 눌렀을떄
         binding.autoTextView.setOnEditorActionListener { textView, actionId, keyEvent ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
 
-                viewModel.getStorage(binding.autoTextView.text.toString()).observe(this){
-                    if(it.isEmpty()){//데이터가 없으면 데이터를 추가할지 묻는다
-                        setDefaultDialog()
-                    }
-                    else{
-                        viewModel.setAdapterData(binding.autoTextView.text.toString() , it)
-                    }
-
+                if(viewModel.item.value.isEmpty()){
+                    setDefaultDialog()
                 }
+                else{
 
+                    binding.autoTextView.dismissDropDown()
+                    lifecycleScope.launch {
+                        viewModel.getStorage(binding.autoTextView.text.toString()).collectLatest {
+                            viewModel.setAdapterData(binding.autoTextView.text.toString() , it)
+                        }
+                    }
+                }
 
                 return@setOnEditorActionListener true
 
@@ -134,9 +124,25 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
         }
 
 
+
         lifecycleScope.launch {
 
-            viewModel.networkState.collect {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.item.collect {
+                    if(suggestAdapter == null){
+                        suggestAdapter = CustomAutoCompleteAdapter(this@SearchActivity, it)
+                        binding.autoTextView.setAdapter(suggestAdapter)
+                    }
+                    else{
+                        suggestAdapter!!.addAll(it)
+                        binding.autoTextView.setAdapter(suggestAdapter)
+                    }
+                }
+
+            }
+
+            //네트워크 체크용
+            viewModel.networkState.collectLatest {
                 if(it == NetworkState.NotConnected){
                     Snackbar
                         .make(binding.constraint, getString(R.string.network_check), 5000)
@@ -146,7 +152,9 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
                         .setAction("확인"){}.show()
                 }
             }
+
         }
+
 
     }
 

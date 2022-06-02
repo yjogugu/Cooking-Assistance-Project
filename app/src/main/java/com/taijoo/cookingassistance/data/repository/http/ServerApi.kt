@@ -1,9 +1,7 @@
 package com.taijoo.cookingassistance.data.repository.http
 
 import com.google.gson.GsonBuilder
-import com.taijoo.cookingassistance.data.model.CookingListResponse
-import com.taijoo.cookingassistance.data.model.SearchCategoryResponse
-import com.taijoo.cookingassistance.data.model.SearchMaterialData
+import com.taijoo.cookingassistance.data.model.*
 import com.taijoo.cookingassistance.util.IP
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -62,5 +60,9 @@ interface ServerApi {
     @FormUrlEncoded
     @POST("SelectCategory.php")
     suspend fun getSelectCategory(@Field("request") request : String): Response<SearchCategoryResponse>
+
+    //레시피 가져오기
+    @GET("SelectRecipe.php")
+    suspend fun getSelectRecipe(@Query("request") request : String , @Query("seq") seq : Int): Response<CookingRecipeResponse>
 
 }

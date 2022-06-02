@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Dao
@@ -27,9 +28,13 @@ interface StorageMaterialDao {
     fun getStorageName(): Flow<List<String>>
 
 
+    //본인이 가지고있는 재료 페이징 형태로 가져오기
     @Query("SELECT * FROM StorageMaterial ORDER BY seq ASC LIMIT :loadSize OFFSET (:startSize-1) * :loadSize")
     fun getStorageList(startSize: Int, loadSize: Int): List<StorageMaterialData>
 
 
+    //유통기한 변경하기
+    @Query("UPDATE StorageMaterial SET expiration_date = :date WHERE seq = :seq")
+    suspend fun setUpdateDate(seq: Long, date: String)
 
 }

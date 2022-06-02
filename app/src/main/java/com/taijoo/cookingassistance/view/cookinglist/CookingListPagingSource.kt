@@ -35,6 +35,9 @@ class CookingListPagingSource(private val service : ServerApi,private val type :
                     if(position != 1){
                         SEQ += 50
                     }
+                    else if(position == 1){
+                        SEQ = 0
+                    }
                     items = service.getSelectFoodList(type,SEQ,localData)
                 }
                 else -> {

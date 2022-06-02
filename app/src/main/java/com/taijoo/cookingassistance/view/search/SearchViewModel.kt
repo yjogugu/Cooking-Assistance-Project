@@ -22,17 +22,17 @@ import kotlin.collections.ArrayList
 @HiltViewModel
 class SearchViewModel @Inject constructor(private val repository: StorageMaterialRepository , private val networkChecker: NetworkChecker) : ViewModel() {
 
+    private val _item = MutableStateFlow(emptyList<MaterialData>())//서버에서 받아올 식재품 목록
+    val item : StateFlow<List<MaterialData>> get() = _item.asStateFlow()//서버에서 받아올 식재품 목록
 
-    private var _item = MutableLiveData<List<MaterialData>>()//서버에서 받아올 식재품 목록
-    val item : LiveData<List<MaterialData>> get() = _item//서버에서 받아올 식재품 목록
+    val search = MutableLiveData<String>()//검색 내용
 
-    var search = MutableLiveData<String>()//검색 내용
 
-    private var _listItem = MutableLiveData<List<StorageMaterialData>>()//리사이클러뷰에 뿌려줄 아이템 목록
+    private val _listItem = MutableLiveData<List<StorageMaterialData>>()//리사이클러뷰에 뿌려줄 아이템 목록
     val listItem : LiveData<List<StorageMaterialData>> get() = _listItem //리사이클러뷰에 뿌려줄 아이템 목록
 
 
-    lateinit var storage : LiveData<List<StorageMaterialData>>//로컬디비 데이터
+    private lateinit var storage : StateFlow<List<StorageMaterialData>>//로컬디비 데이터
 
 
     lateinit var categoryItem : List<SearchCategoryData>//카테고리 아이템
@@ -48,22 +48,32 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
     }
 
     init {
+
         val list = ArrayList<MaterialData>()
         list.add(MaterialData(0,"",0,""))
         _item.value = list
 
+        getNetworkCheck()
+
+    }
+
+    private fun getNetworkCheck(){
         viewModelScope.launch {
+
             networkChecker.networkState.collectLatest {
                 networkCheck = it == NetworkState.Connected
                 _networkState.emit(it)
             }
+
         }
     }
 
-    //Room 에서 입력한 키워드 값 가져오기
-    fun getStorage(name : String) :LiveData<List<StorageMaterialData>> {
 
-        storage = repository.getStorage(name)
+
+    //Room 에서 입력한 키워드 값 가져오기
+    fun getStorage(name : String) :StateFlow<List<StorageMaterialData>> {
+
+        storage = repository.getStorage(name).stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
         return storage
     }
@@ -90,7 +100,7 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
 
                 when(response.isSuccessful){
                     true->{
-                        _item.value = response.body()!!.response.data
+                        _item.emit(response.body()!!.response.data)
                     }
                     false->{
                         Log.e(TAG,"getMaterialList false")
@@ -120,7 +130,7 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
                         val item = ArrayList<StorageMaterialData>()
                         item.add(StorageMaterialData(response.body()!!.response.data[0].seq.toLong(),search,0,0,
                             "0000-00-00" , SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
-
+//                        _listItem.emit(item)
                         _listItem.value = item
 
                     }
@@ -143,29 +153,33 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
 
     //서버에 데이터가 있을떄 리사이클러뷰 아이템 뿌려주기
     fun setAdapterData(search : String , roomData : List<StorageMaterialData>){
-        val list = ArrayList<StorageMaterialData>()
+        viewModelScope.launch {
+            val list = ArrayList<StorageMaterialData>()
 
-        for(j in 0 until item.value!!.size){
-            if (item.value!![j].name.contains(search) && search != ""){
+            for(j in 0 until item.value.size){
+                if (item.value[j].name.contains(search) && search != ""){
 
-                list.add(StorageMaterialData(
-                    item.value!![j].seq.toLong() , item.value!![j].name , 0 ,item.value!![j].type
-                    ,"0000-00-00", SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
+                    list.add(StorageMaterialData(
+                        item.value[j].seq.toLong() , item.value[j].name , 0 ,item.value[j].type
+                        ,"0000-00-00", SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
 
+                }
             }
-        }
 
-        //로컬디비에 있는 재료 갯수 가져와서 적용
-        for (listItem in list){
-            if(!list.isNullOrEmpty()){
-                for (j in roomData.indices){
-                    if(listItem.seq == roomData[j].seq){
-                        listItem.size = roomData[j].size
+            //로컬디비에 있는 재료 갯수 가져와서 적용
+            for (listItem in list){
+                if(!list.isNullOrEmpty()){
+                    for (j in roomData.indices){
+                        if(listItem.seq == roomData[j].seq){
+                            listItem.size = roomData[j].size
+                        }
                     }
                 }
             }
+            _listItem.value = list
+//            _listItem.emit(list)
+
         }
-        _listItem.value = list
 
     }
 

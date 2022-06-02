@@ -4,6 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="activity"
+            type="com.taijoo.cookingassistance.view.cooking_recipe.CookingRecipeActivity" />
         <variable
             name="viewmodel"
             type="com.taijoo.cookingassistance.view.cooking_recipe.CookingRecipeViewModel" />
@@ -11,6 +15,7 @@
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.cooking_recipe.CookingRecipeActivity">
@@ -50,6 +55,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
+                    toolbarOnBackPressed="@{activity}"
                     app:navigationIcon="@drawable/ic_back_24"
                     app:layout_collapseMode="pin" />
 

@@ -19,6 +19,7 @@ import com.taijoo.cookingassistance.util.NetworkState
 import com.taijoo.cookingassistance.view.cookinglist.CookingListFragment
 import com.taijoo.cookingassistance.view.search.SearchActivity
 import com.taijoo.cookingassistance.view.storage_material.StorageMaterialFragment
+import com.taijoo.cookingassistance.view.test.TestActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
         //네트워크 연결 체크
         lifecycleScope.launch {
-            viewModel.networkState.collect {
+            viewModel.networkState.collectLatest {
                 if(NetworkState.NotConnected == it){
                     Snackbar
                         .make(binding.constraint, getString(R.string.network_check), 5000)

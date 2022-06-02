@@ -4,13 +4,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.databinding.ListItemMaterialBinding
 
-class StorageMaterialViewHolder(var binding : ListItemMaterialBinding) : RecyclerView.ViewHolder(binding.root) {
+class StorageMaterialViewHolder(private val binding : ListItemMaterialBinding , private val storageMaterialInterface : StorageMaterialInterface) : RecyclerView.ViewHolder(binding.root) {
 
 
     fun bind(item : StorageMaterialData){
         binding.apply {
             storageMaterialData = item
             executePendingBindings()
+        }
+
+        binding.linearLayout3.setOnClickListener {
+            storageMaterialInterface.itemClick(item)
         }
 
     }

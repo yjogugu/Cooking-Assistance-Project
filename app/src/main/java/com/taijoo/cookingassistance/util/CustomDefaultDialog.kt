@@ -13,7 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.databinding.CustomDefaultDialogLayoutBinding
 
-class CustomDefaultDialog (val activity: Context, val title : String, val content : String)  : Dialog(activity) {
+class CustomDefaultDialog (private val activity: Context, val title : String, val content : String)  : Dialog(activity) {
 
     private lateinit var binding : CustomDefaultDialogLayoutBinding
 

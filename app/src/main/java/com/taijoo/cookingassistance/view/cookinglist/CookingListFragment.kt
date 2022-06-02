@@ -26,9 +26,11 @@ import com.taijoo.cookingassistance.view.MainActivity
 import com.taijoo.cookingassistance.view.MainInterface
 import com.taijoo.cookingassistance.view.cooking_recipe.CookingRecipeActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
@@ -59,37 +61,31 @@ class CookingListFragment () : Fragment() {
         binding.rv.adapter = adapter
 
         viewModel.type.observe(viewLifecycleOwner){type->
-            adapter.refresh()
             when(type){
-                0->{//전체
-                    getData()
+                3->{//검색
                 }
-                1->{
+                else->{
+                    adapter.refresh()
                     getData()
-                }
-                3->{
-
                 }
             }
 
         }
 
+        lifecycleScope.launch {
+            viewModel.storage.collectLatest {
+                viewModel.jsonArray = JSONArray()
+                for (i in it){
+                    viewModel.jsonArray.put(i)
+                }
+                viewModel.jsonObject.put("data",viewModel.jsonArray)
+                if(viewModel.type.value == 1){//요리가능한 목록 상태일때 + Room 자기가 가지고있는 데이터가 변경되었을때 변경
+                    adapter.refresh()
+                    getData()
+                }
+            }
+        }
 
-//        //Room 에서 본인이 갖고있는 재료 갖고오기
-//        viewModel.storage.observe(viewLifecycleOwner){
-//
-//            for (i in it){
-//                Log.e("여기","ㅇㅇ"+i)
-////                viewModel.jsonArray.put(i)
-//            }
-//
-//            viewModel.jsonArray.put("김치")
-//            viewModel.jsonArray.put("두부")
-//            viewModel.jsonArray.put("돼지고기앞다리")
-//            viewModel.jsonArray.put("소고기")
-//            viewModel.jsonObject.put("data",viewModel.jsonArray)
-//
-//        }
 
         //어뎁터 아이템 클릭
         adapter.setOnItemClickListener(object : CookingListAdapter.OnItemClickListener{
@@ -108,20 +104,24 @@ class CookingListFragment () : Fragment() {
         return binding.root
     }
 
+
     companion object {
         fun newInstance() = CookingListFragment()
     }
-
 
     //리사이클러뷰 아이템 뿌려주기
 
     private fun getData(){
 
         lifecycleScope.launch {
-            viewModel.networkState.collect { network->//네트워크가 연결되어있는지 확인
+            viewModel.networkState.collectLatest { network->//네트워크가 연결되어있는지 확인
                 if(network == NetworkState.Connected){//네트워크가 연결되어있으면 데이터 불러오기
                     viewModel.getSelectFoodList(viewModel.jsonObject.toString()).collectLatest {
                         adapter.submitData(it)
+                        adapter.loadStateFlow.collectLatest {
+                            binding.rv.smoothScrollToPosition(0)
+
+                        }
                     }
                 }
             }

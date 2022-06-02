@@ -1,6 +1,9 @@
 package com.taijoo.cookingassistance.util
 
+import android.app.Activity
+import android.content.Context
 import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -26,6 +29,16 @@ object BindingAdapter {
             .apply(requestOptions)
             .into(imageView)
 
+
+    }
+
+    @BindingAdapter("toolbarOnBackPressed")
+    @JvmStatic
+    fun bindToolbar(toolbar: Toolbar, activity : Activity) {
+
+        toolbar.setNavigationOnClickListener {
+            activity.onBackPressed()
+        }
 
     }
 
