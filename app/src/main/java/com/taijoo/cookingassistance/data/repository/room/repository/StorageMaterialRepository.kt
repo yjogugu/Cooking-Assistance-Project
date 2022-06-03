@@ -4,12 +4,14 @@ import androidx.lifecycle.asLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.taijoo.cookingassistance.data.model.SearchCategoryResponse
 import com.taijoo.cookingassistance.data.model.SearchMaterialData
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.data.repository.http.ServerApi
 import com.taijoo.cookingassistance.data.repository.room.dao.StorageMaterialDao
 import com.taijoo.cookingassistance.view.storage_material.StorageMaterialPagingSource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -27,8 +29,8 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
         storageMaterialDao.insertStorageMaterial(storageMaterialData)
     }
 
-    suspend fun updateDate(seq : Long , date : String){
-        storageMaterialDao.setUpdateDate(seq, date)
+    suspend fun updateDate(seq : Long , size : Int){
+        storageMaterialDao.setUpdateDate(seq, size)
     }
 
     //로컬디비에있는 해당되는 재료 가져오기
@@ -40,7 +42,9 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
     //재료 가져오기 페이징
     fun getPagingStorage() : Flow<PagingData<StorageMaterialData>>{
 
-        return Pager( config = PagingConfig( pageSize = 20, enablePlaceholders = false ), pagingSourceFactory = { StorageMaterialPagingSource(storageMaterialDao) } ).flow
+        return Pager( config = PagingConfig( pageSize = 50, enablePlaceholders = false  ),
+            pagingSourceFactory = { StorageMaterialPagingSource(storageMaterialDao) } ).flow.cachedIn(
+            CoroutineScope(Dispatchers.IO))
     }
 
 
@@ -58,5 +62,13 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
     //카테고리 가져오기
     suspend fun getSearchCategory(request : String) : Response<SearchCategoryResponse> {
         return service.getSelectCategory(request)
+    }
+
+    //로컬디비에있는 특정 재료 가져오기
+    fun getStorage(seq : Long) =  storageMaterialDao.getStorage(seq).flowOn(Dispatchers.IO)
+
+    //재료 저장
+    suspend fun deleteStorage(storageMaterialData : StorageMaterialData){
+        storageMaterialDao.deleteStorageMaterial(storageMaterialData)
     }
 }

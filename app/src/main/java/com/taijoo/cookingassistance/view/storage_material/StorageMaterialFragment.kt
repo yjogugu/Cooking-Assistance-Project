@@ -1,6 +1,6 @@
 package com.taijoo.cookingassistance.view.storage_material
 
-import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,27 +9,21 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.ItemAnimator
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.databinding.FragmentStorageMaterialBinding
-import com.taijoo.cookingassistance.util.CustomCategoryDialog
 import com.taijoo.cookingassistance.util.CustomDateDialog
+import com.taijoo.cookingassistance.view.storage_material_setting.StorageMaterialSettingActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.observeOn
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+
 
 @AndroidEntryPoint
 class StorageMaterialFragment : Fragment(),StorageMaterialInterface {
@@ -40,6 +34,7 @@ class StorageMaterialFragment : Fragment(),StorageMaterialInterface {
 
     private val viewModel : StorageMaterialViewModel by viewModels()
 
+    private lateinit var animator: ItemAnimator
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_storage_material , container , false)
@@ -47,9 +42,14 @@ class StorageMaterialFragment : Fragment(),StorageMaterialInterface {
         binding.apply {
             lifecycleOwner = this@StorageMaterialFragment
         }
-
         binding.storageList.setHasFixedSize(true)
         binding.storageList.layoutManager = LinearLayoutManager(context)
+
+        animator = binding.storageList.itemAnimator!!
+        if (animator is SimpleItemAnimator) {
+            (animator as SimpleItemAnimator).supportsChangeAnimations = false
+        }
+
         binding.storageList.adapter = adapter
 
         getData()
@@ -61,23 +61,43 @@ class StorageMaterialFragment : Fragment(),StorageMaterialInterface {
 
     // 재료에 변경사항이 있는지 확인
     private fun getObserve(){
-        lifecycleScope.launch {
-            viewModel.storage.collect {
-                if(it.isNotEmpty()){
-                    adapter.refresh()
-                }
-            }
-        }
+//        viewModel.storage.observe(viewLifecycleOwner){
+//            Log.e("여기","3322ㅇㅇ"+it)
+//            if(it.isNotEmpty()){
+//                adapter.refresh()
+//            }
+//        }
+
+//        lifecycleScope.launch {
+//            viewModel.storage.collectLatest {
+//                Log.e("여기","22ㅇㅇ"+it)
+//                if(it.isNotEmpty()){
+//
+//                    adapter.refresh()
+//                }
+//            }
+//
+//        }
     }
 
     //페이징 데이터
     private fun getData(){
         lifecycleScope.launch {
-            viewModel.pagingData.collectLatest {
-                adapter.submitData(it)
+            launch {
+                viewModel.pagingData.collect{
+                    Log.e("여기","ㅇㅇ")
+                    adapter.submitData(it)
+                }
             }
-        }
+            launch {
+                viewModel.storage.collectLatest {
+                    Log.e("여기","11ㅇㅇ")
+                    adapter.notifyItemChanged(1)
+//                    adapter.refresh()
+                }
+            }
 
+        }
     }
 
     companion object {
@@ -86,21 +106,10 @@ class StorageMaterialFragment : Fragment(),StorageMaterialInterface {
 
     //리사이클러뷰 아이템 클릭
     override fun itemClick(item : StorageMaterialData) {
-        val customDateDialog = CustomDateDialog(requireActivity())
 
-        customDateDialog.setOnClickListener(object : CustomDateDialog.CustomCategoryDialogListener{
-            override fun onOkClick(date : String) {
-                item.expiration_date = date
-                viewModel.setDate(item)
-            }
-
-            override fun onNoClick() {
-
-            }
-
-        })
-
-        customDateDialog.show()
+        val intent = Intent(requireContext(), StorageMaterialSettingActivity::class.java)
+        intent.putExtra("seq",item.seq)
+        startActivity(intent)
 
     }
 

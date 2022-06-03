@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CookingAssistance">
         <activity
+            android:name=".view.storage_material_setting.StorageMaterialSettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.test.TestActivity"
             android:exported="false" />
         <activity

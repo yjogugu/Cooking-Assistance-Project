@@ -3,11 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/drawable/custom_background_edittext.xml" value="0.3395" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/drawable/custom_background_textview.xml" value="0.339" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/drawable/custom_linearlayout_ripple.xml" value="0.388" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/activity_cooking_recipe.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/activity_main.xml" value="0.31302083333333336" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/activity_search.xml" value="0.37552083333333336" />
+        <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/activity_storage_material_setting.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/activity_test.xml" value="0.3072916666666667" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/custom_category_dialog_layout.xml" value="0.3484375" />
         <entry key="..\:/AndroidStudioProjects_TEST/CookingAssistance/app/src/main/res/layout/custom_date_dialog_layout.xml" value="0.42864583333333334" />

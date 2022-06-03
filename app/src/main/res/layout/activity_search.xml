@@ -9,6 +9,10 @@
             name="searchViewModel"
             type="com.taijoo.cookingassistance.view.search.SearchViewModel" />
 
+        <variable
+            name="activity"
+            type="com.taijoo.cookingassistance.view.search.SearchActivity" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,6 +20,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.search.SearchActivity">
+
+        <include
+            android:id="@+id/title_appbar"
+            layout="@layout/item_title_include"
+            app:TitleActivity="@{activity}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_collapseMode="parallax"
+            app:layout_collapseParallaxMultiplier="0.5"/>
 
 
         <androidx.appcompat.widget.AppCompatAutoCompleteTextView
@@ -31,7 +45,7 @@
             android:singleLine="true"
             android:inputType="text"
             android:completionThreshold="2"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/title_appbar"/>
 
 
         <androidx.recyclerview.widget.RecyclerView

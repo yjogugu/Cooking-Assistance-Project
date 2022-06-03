@@ -15,7 +15,7 @@ class StorageMaterialAdapter(private val storageMaterialInterface : StorageMater
     companion object {
         private val DIFF = object: DiffUtil.ItemCallback<StorageMaterialData>() {
             override fun areItemsTheSame(oldItem: StorageMaterialData, newItem: StorageMaterialData): Boolean {
-                return oldItem == newItem
+                return oldItem.seq == newItem.seq
             }
 
             override fun areContentsTheSame(oldItem: StorageMaterialData, newItem: StorageMaterialData): Boolean {

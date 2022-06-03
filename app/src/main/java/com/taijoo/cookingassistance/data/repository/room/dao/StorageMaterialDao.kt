@@ -1,9 +1,7 @@
 package com.taijoo.cookingassistance.data.repository.room.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.paging.PagingSource
+import androidx.room.*
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +32,15 @@ interface StorageMaterialDao {
 
 
     //유통기한 변경하기
-    @Query("UPDATE StorageMaterial SET expiration_date = :date WHERE seq = :seq")
-    suspend fun setUpdateDate(seq: Long, date: String)
+    @Query("UPDATE StorageMaterial SET size = :size WHERE seq = :seq")
+    suspend fun setUpdateDate(seq: Long, size: Int)
+
+    //특정데이터만 가져오기
+    @Query("SELECT * FROM StorageMaterial WHERE seq = :seq")
+    fun getStorage(seq: Long) : Flow<StorageMaterialData>
+
+    //해당 항목 지우기
+    @Delete
+    suspend fun deleteStorageMaterial(storageMaterialData: StorageMaterialData)
 
 }

@@ -2,6 +2,7 @@ package com.taijoo.cookingassistance.view.search
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -51,7 +52,9 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
 
         binding.apply {
             searchViewModel = viewModel
+            activity = this@SearchActivity
             searchList.setHasFixedSize(true)
+            titleAppbar.ivBack.visibility = View.VISIBLE
             lifecycleOwner = this@SearchActivity
         }
 
@@ -104,11 +107,10 @@ class SearchActivity : AppCompatActivity() , SearchInterface {
         binding.autoTextView.setOnEditorActionListener { textView, actionId, keyEvent ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
 
-                if(viewModel.item.value.isEmpty()){
+                if(viewModel.item.value.isEmpty() && adapter.itemCount == 0){
                     setDefaultDialog()
                 }
                 else{
-
                     binding.autoTextView.dismissDropDown()
                     lifecycleScope.launch {
                         viewModel.getStorage(binding.autoTextView.text.toString()).collectLatest {

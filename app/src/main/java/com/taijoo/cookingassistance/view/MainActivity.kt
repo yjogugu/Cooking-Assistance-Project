@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -48,11 +49,11 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             fragmentList.add(storageMaterialFragment)//보관중인 요리 재료
             fragmentList.add(cookingListFragment)//요리 레시피
-
+            titleAppbar.ivSearch.visibility = View.VISIBLE
             lifecycleOwner = this@MainActivity
         }
 
-        popup = PopupMenu(this,binding.titleAppbar.tvSearch)
+        popup = PopupMenu(this,binding.titleAppbar.ivSearch)
         popup.inflate(R.menu.main_menu)
 
 
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         viewPager()
 
-        binding.titleAppbar.tvSearch.setOnClickListener {
+        binding.titleAppbar.ivSearch.setOnClickListener {
             when(binding.bottomBar.selectedIndex){
                 0->{
                     startActivity(Intent(this,SearchActivity::class.java))

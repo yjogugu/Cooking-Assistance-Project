@@ -1,27 +1,27 @@
 package com.taijoo.cookingassistance.util
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.Window
 import androidx.databinding.DataBindingUtil
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.databinding.CustomDateDialogLayoutBinding
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CustomDateDialog(private val activity: Context) : Dialog(activity) {
+class CustomDateDialog(private val activity: Context , private val oldDate : String) : Dialog(activity) {
 
     private lateinit var customCategoryDialogListener : CustomCategoryDialogListener
 
     private lateinit var binding : CustomDateDialogLayoutBinding
 
+    private val format : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd",Locale.KOREA)
 
     interface CustomCategoryDialogListener{
         fun onOkClick(date : String)
@@ -39,6 +39,23 @@ class CustomDateDialog(private val activity: Context) : Dialog(activity) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         binding = DataBindingUtil.inflate(LayoutInflater.from(activity), R.layout.custom_date_dialog_layout,null,false)
+
+        binding.apply {
+            if(oldDate != "0000-00-00"){//날짜가 이미 지정되었을때만 지정된 날짜로 시작
+                val calendar = Calendar.getInstance()
+
+                var date : Date = Date()
+
+                try {
+                    date = format.parse(oldDate)!!
+                }catch (e : Exception){
+
+                }
+                calendar.time = date
+
+                datePicker.updateDate(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONDAY),calendar.get(Calendar.DAY_OF_MONTH))
+            }
+        }
 
         setContentView(binding.root)
 
@@ -63,7 +80,6 @@ class CustomDateDialog(private val activity: Context) : Dialog(activity) {
             val calendar = Calendar.getInstance()
             calendar[year, month] = day
 
-            val format = SimpleDateFormat("yyyy-MM-dd",Locale.KOREA)
             val strDate = format.format(calendar.time).toString()
 
             customCategoryDialogListener.onOkClick(strDate)

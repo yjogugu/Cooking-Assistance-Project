@@ -13,7 +13,7 @@ class StorageMaterialViewHolder(private val binding : ListItemMaterialBinding , 
             executePendingBindings()
         }
 
-        binding.linearLayout3.setOnClickListener {
+        binding.constraint.setOnClickListener {
             storageMaterialInterface.itemClick(item)
         }
 
