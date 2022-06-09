@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity(tableName = "StorageMaterial" )
-data class StorageMaterialData(@PrimaryKey(autoGenerate = true) var seq : Long,
+data class StorageMaterialData(@PrimaryKey(autoGenerate = true) val seq : Long,
                                @ColumnInfo(name = "name") var name : String,
                                @ColumnInfo(name = "size") var size : Int,
                                @ColumnInfo(name = "type") var type : Int,

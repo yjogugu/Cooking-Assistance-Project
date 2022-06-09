@@ -46,7 +46,10 @@ class StorageMaterialSettingViewModel @Inject constructor(private val repository
     fun getData(){
         viewModelScope.launch {
             repository.getStorage(seq).collectLatest {
-                _storageData.emit(it)
+                if(it != null){
+                    _storageData.emit(it)
+                }
+
             }
         }
 

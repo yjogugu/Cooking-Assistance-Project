@@ -1,5 +1,6 @@
 package com.taijoo.cookingassistance.data.repository.room.repository
 
+import android.util.Log
 import androidx.lifecycle.asLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

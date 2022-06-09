@@ -1,5 +1,6 @@
 package com.taijoo.cookingassistance.view.storage_material
 
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.PagingData
@@ -8,6 +9,7 @@ import com.taijoo.cookingassistance.data.model.MaterialData
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.data.repository.room.repository.StorageMaterialRepository
 import com.taijoo.cookingassistance.util.NetworkState
+import com.taijoo.cookingassistance.view.search.SearchActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,34 +22,32 @@ import javax.inject.Inject
 class StorageMaterialViewModel @Inject constructor(private val repository: StorageMaterialRepository) : ViewModel(){
 
 
-    val storage : StateFlow<List<StorageMaterialData>> = repository.getStorage().stateIn(viewModelScope, SharingStarted.Lazily , emptyList())
+    var adapterPosition = 0//어뎁터 포지션
 
-//    private var _storage : MutableStateFlow<List<StorageMaterialData>> = MutableStateFlow(emptyList())
-//    val storage : StateFlow<List<StorageMaterialData>> = _storage.asStateFlow()
-
-//    val storage : LiveData<List<StorageMaterialData>> get()= repository.getStorage().asLiveData()
+    var viewType = 0 // 0: 기본 , 1:검색 화면 전환
+    private var _storage : MutableStateFlow<StorageMaterialData> = MutableStateFlow<StorageMaterialData>(StorageMaterialData())
+    val storage : StateFlow<StorageMaterialData> get() = _storage.asStateFlow()
 
     //viewModelScope 은 메인쓰레드로 동작하게끔 만들어졌기에 PagingData3 + Room 에 접근시 에러가 나기 때문에 코루틴으로 백그라운드로 실행하여야한다
-//    val pagingData : Flow<PagingData<StorageMaterialData>> = repository.getPagingStorage().cachedIn(CoroutineScope(Dispatchers.IO))
-
     private var _pagingData = MutableStateFlow<PagingData<StorageMaterialData>>(PagingData.empty())
     val pagingData : StateFlow<PagingData<StorageMaterialData>> = _pagingData.asStateFlow()
 
-//    private var _pagingData = MutableSharedFlow<PagingData<StorageMaterialData>>(replay = 1)
-//    val pagingData : SharedFlow<PagingData<StorageMaterialData>> = _pagingData.asSharedFlow()
-
     init {
-//        getData()
+        getData()
         getPagingData()
     }
 
     //db 옵저버
-    private fun getData(va : StorageMaterialData){
-
+    private fun getData(){
         viewModelScope.launch {
-//            repository.getStorage().collectLatest {
-//                _storage.emit(it)
-//            }
+            _storage.collectLatest {
+                repository.getStorage(it.seq).collectLatest {data ->
+                    if(data != null){
+                        _storage.emit(data)
+                    }
+
+                }
+            }
 
         }
 
@@ -57,13 +57,19 @@ class StorageMaterialViewModel @Inject constructor(private val repository: Stora
     private fun getPagingData(){
         viewModelScope.launch {
             repository.getPagingStorage().collectLatest {
-                Log.e("여기","ㅇㅇ")
-                _pagingData.value = it
+                _pagingData.emit(it)
             }
         }
     }
 
+    //아이템 데이터
+    fun setStorage(item : StorageMaterialData , position : Int){
+        viewModelScope.launch {
+            adapterPosition = position
+            _storage.emit(item)
+        }
 
+    }
 
 
 }

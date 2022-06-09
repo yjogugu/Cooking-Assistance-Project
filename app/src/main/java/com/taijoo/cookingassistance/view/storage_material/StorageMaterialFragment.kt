@@ -23,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.round
 
 
 @AndroidEntryPoint
@@ -54,49 +55,32 @@ class StorageMaterialFragment : Fragment(),StorageMaterialInterface {
 
         getData()
 
-        getObserve()
-
         return binding.root
     }
 
-    // 재료에 변경사항이 있는지 확인
-    private fun getObserve(){
-//        viewModel.storage.observe(viewLifecycleOwner){
-//            Log.e("여기","3322ㅇㅇ"+it)
-//            if(it.isNotEmpty()){
-//                adapter.refresh()
-//            }
-//        }
-
-//        lifecycleScope.launch {
-//            viewModel.storage.collectLatest {
-//                Log.e("여기","22ㅇㅇ"+it)
-//                if(it.isNotEmpty()){
-//
-//                    adapter.refresh()
-//                }
-//            }
-//
-//        }
-    }
 
     //페이징 데이터
     private fun getData(){
         lifecycleScope.launch {
             launch {
                 viewModel.pagingData.collect{
-                    Log.e("여기","ㅇㅇ")
-                    adapter.submitData(it)
+                    adapter.submitData(lifecycle,it)
                 }
             }
-            launch {
+            launch {//재료에 변화가 있는지 체크
                 viewModel.storage.collectLatest {
-                    Log.e("여기","11ㅇㅇ")
-                    adapter.notifyItemChanged(1)
-//                    adapter.refresh()
+                    adapter.setData(it,viewModel.adapterPosition)
                 }
             }
 
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(viewModel.viewType == 1){
+            adapter.refresh()
+            viewModel.viewType = 0
         }
     }
 
@@ -105,12 +89,15 @@ class StorageMaterialFragment : Fragment(),StorageMaterialInterface {
     }
 
     //리사이클러뷰 아이템 클릭
-    override fun itemClick(item : StorageMaterialData) {
-
+    override fun itemClick(item : StorageMaterialData , position : Int) {
+        viewModel.setStorage(item,position)
         val intent = Intent(requireContext(), StorageMaterialSettingActivity::class.java)
         intent.putExtra("seq",item.seq)
         startActivity(intent)
+    }
 
+    fun setViewType(viewType : Int){
+        viewModel.viewType = viewType
     }
 
 }

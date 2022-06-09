@@ -19,7 +19,7 @@ interface StorageMaterialDao {
 
     //재료 전체 데이터 가져오기
     @Query("SELECT * FROM StorageMaterial ORDER BY seq")
-    fun getStorage(): Flow<List<StorageMaterialData>>
+    fun getStorage(): Flow<StorageMaterialData?>
 
     //추천 데이터용 재료 이름만 가져오기
     @Query("SELECT name FROM StorageMaterial WHERE type  IN (0,1) ORDER BY seq")
@@ -37,7 +37,7 @@ interface StorageMaterialDao {
 
     //특정데이터만 가져오기
     @Query("SELECT * FROM StorageMaterial WHERE seq = :seq")
-    fun getStorage(seq: Long) : Flow<StorageMaterialData>
+    fun getStorage(seq: Long) : Flow<StorageMaterialData?>
 
     //해당 항목 지우기
     @Delete

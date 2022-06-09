@@ -4,5 +4,5 @@ import com.taijoo.cookingassistance.data.model.StorageMaterialData
 
 interface StorageMaterialInterface {
 
-    fun itemClick(item : StorageMaterialData)
+    fun itemClick(item : StorageMaterialData , position : Int)
 }

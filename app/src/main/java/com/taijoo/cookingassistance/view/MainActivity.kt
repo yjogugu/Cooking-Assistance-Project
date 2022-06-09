@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         binding.titleAppbar.ivSearch.setOnClickListener {
             when(binding.bottomBar.selectedIndex){
                 0->{
+                    storageMaterialFragment.setViewType(1)
                     startActivity(Intent(this,SearchActivity::class.java))
                 }
                 1->{

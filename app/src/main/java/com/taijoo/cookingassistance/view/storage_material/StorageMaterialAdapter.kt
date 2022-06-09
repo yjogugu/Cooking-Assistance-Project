@@ -1,5 +1,6 @@
 package com.taijoo.cookingassistance.view.storage_material
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -32,6 +33,14 @@ class StorageMaterialAdapter(private val storageMaterialInterface : StorageMater
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is StorageMaterialViewHolder){
             holder.bind(getItem(position)!!)
+        }
+    }
+
+    //데이터 변경
+    fun setData(data:StorageMaterialData , position: Int){
+        if(snapshot().isNotEmpty()){
+            snapshot()[position]!!.size = data.size
+            notifyItemChanged(position)
         }
     }
 

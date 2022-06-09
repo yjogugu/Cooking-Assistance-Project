@@ -14,7 +14,7 @@ class StorageMaterialViewHolder(private val binding : ListItemMaterialBinding , 
         }
 
         binding.constraint.setOnClickListener {
-            storageMaterialInterface.itemClick(item)
+            storageMaterialInterface.itemClick(item,bindingAdapterPosition)
         }
 
     }
