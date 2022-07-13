@@ -25,7 +25,9 @@ import javax.xml.transform.Result
 @HiltViewModel
 class CookingListViewModel @Inject constructor(private val repository: CookingRepository , private val networkChecker: NetworkChecker) : ViewModel() {
 
-    private var item : Flow<PagingData<CookingListData>>? = null
+//    private var item : Flow<PagingData<CookingListData>>? = null
+    private var _item : MutableStateFlow<PagingData<CookingListData>> = MutableStateFlow<PagingData<CookingListData>>(PagingData.empty())
+    val item : StateFlow<PagingData<CookingListData>> get() = _item
 
     val storage : StateFlow<List<String>> = repository.getStorageName().stateIn(viewModelScope, SharingStarted.Lazily ,  emptyList())
 
@@ -53,13 +55,13 @@ class CookingListViewModel @Inject constructor(private val repository: CookingRe
     }
 
     //서버에서 음식 리스트 가져오기
-    fun getSelectFoodList(localData : String ) : Flow<PagingData<CookingListData>>{
-        val newItem : Flow<PagingData<CookingListData>> = repository.getSelectFoodList(type.value!!,localData)
-            .cachedIn(viewModelScope)
+    fun getSelectFoodList(localData : String ) {
+        viewModelScope.launch {
+            repository.getSelectFoodList(type.value!!,localData).cachedIn(viewModelScope).collectLatest {
+                _item.emit(it)
+            }
+        }
 
-        item = newItem
-
-        return newItem
     }
 
 

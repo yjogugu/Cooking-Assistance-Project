@@ -15,12 +15,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CookingAssistance">
+
+        <activity
+            android:name=".view.storage_material_setting.StorageMaterialSettingComposeActivity"
+            android:exported="false" />
+
         <activity
             android:name=".view.storage_material_setting.StorageMaterialSettingActivity"
             android:exported="false" />
         <activity
-            android:name=".view.test.TestActivity"
+            android:name=".view.ui.StorageMaterialSettingView"
             android:exported="false" />
+
         <activity
             android:name=".view.cooking_recipe.CookingRecipeActivity"
             android:exported="false" />

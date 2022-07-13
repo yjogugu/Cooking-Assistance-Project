@@ -38,7 +38,11 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
     fun getStorage(name : String) = storageMaterialDao.getStorage(name).flowOn(Dispatchers.IO)
 
     //로컬디비에있는 재료 가져오기
+    fun getStorage(loadSize: Int) = storageMaterialDao.getStorage(loadSize = loadSize).flowOn(Dispatchers.IO)
+
+    //로컬디비에있는 재료 가져오기
     fun getStorage() = storageMaterialDao.getStorage().flowOn(Dispatchers.IO)
+
 
     //재료 가져오기 페이징
     fun getPagingStorage() : Flow<PagingData<StorageMaterialData>>{
@@ -70,6 +74,6 @@ class StorageMaterialRepository @Inject constructor(private val storageMaterialD
 
     //재료 저장
     suspend fun deleteStorage(storageMaterialData : StorageMaterialData){
-        storageMaterialDao.deleteStorageMaterial(storageMaterialData)
+        storageMaterialDao.deleteStorageMaterial(storageMaterialData.seq)
     }
 }

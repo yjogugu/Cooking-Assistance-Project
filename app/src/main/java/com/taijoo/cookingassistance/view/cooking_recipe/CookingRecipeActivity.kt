@@ -31,11 +31,11 @@ class CookingRecipeActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this,R.layout.activity_cooking_recipe)
 
         binding.apply {
-            viewmodel  = viewModel
-            activity = this@CookingRecipeActivity
             viewModel.name = intent.getStringExtra("name").toString()
             viewModel.seq = intent.getIntExtra("seq",0)
             viewModel.img = intent.getStringExtra("img").toString()
+            viewmodel  = viewModel
+            activity = this@CookingRecipeActivity
             lifecycleOwner = this@CookingRecipeActivity
         }
 
@@ -44,6 +44,7 @@ class CookingRecipeActivity : AppCompatActivity() {
         getRecipe()
 
     }
+
 
     private fun init(){
         binding.recyclerView.setHasFixedSize(true)
@@ -75,9 +76,14 @@ class CookingRecipeActivity : AppCompatActivity() {
     //데이터 UI 반영
     private fun getRecipe(){
         lifecycleScope.launch {
-            viewModel.item.collect {
+            viewModel.item.collectLatest {
                 adapter.setData(it)
             }
         }
+    }
+
+    override fun onBackPressed() {
+//        super.onBackPressed()
+        finishAfterTransition()
     }
 }

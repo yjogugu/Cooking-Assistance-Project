@@ -1,13 +1,17 @@
 package com.taijoo.cookingassistance.module
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import com.taijoo.cookingassistance.data.repository.room.dao.StorageMaterialDao
 import com.taijoo.cookingassistance.data.repository.room.database.UserDB
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -26,4 +30,6 @@ class DatabaseModule {
     fun provideStorageMaterialDao(userDB: UserDB) : StorageMaterialDao{
         return userDB.storageMaterialDao()
     }
+
+
 }

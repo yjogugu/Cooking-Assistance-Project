@@ -129,7 +129,7 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
                     true ->{
                         val item = ArrayList<StorageMaterialData>()
                         item.add(StorageMaterialData(response.body()!!.response.data[0].seq.toLong(),search,0,0,
-                            "","0000-00-00" , SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
+                            "","0000-00-00" , SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis()),0))
 //                        _listItem.emit(item)
                         _listItem.value = item
 
@@ -161,7 +161,7 @@ class SearchViewModel @Inject constructor(private val repository: StorageMateria
 
                     list.add(StorageMaterialData(
                         item.value[j].seq.toLong() , item.value[j].name , 0 ,item.value[j].type
-                        ,"","0000-00-00", SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis())))
+                        ,"","0000-00-00", SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(System.currentTimeMillis()),0))
 
                 }
             }

@@ -4,6 +4,10 @@
 
     <data>
 
+        <variable
+            name="title_textview"
+            type="String" />
+
     </data>
 
     <LinearLayout
@@ -32,7 +36,7 @@
                     android:textSize="17sp"
                     android:textColor="@color/color_000000"
                     android:textStyle="bold"
-                    android:text="@string/date_dialog1"/>
+                    android:text="@{title_textview}" />
 
 
                 <DatePicker

@@ -15,7 +15,7 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CustomDateDialog(private val activity: Context , private val oldDate : String) : Dialog(activity) {
+class CustomDateDialog(private val activity: Context , private val title : String  ,private val oldDate : String) : Dialog(activity) {
 
     private lateinit var customCategoryDialogListener : CustomCategoryDialogListener
 
@@ -41,6 +41,7 @@ class CustomDateDialog(private val activity: Context , private val oldDate : Str
         binding = DataBindingUtil.inflate(LayoutInflater.from(activity), R.layout.custom_date_dialog_layout,null,false)
 
         binding.apply {
+            titleTextview = title
             if(oldDate != "0000-00-00"){//날짜가 이미 지정되었을때만 지정된 날짜로 시작
                 val calendar = Calendar.getInstance()
 

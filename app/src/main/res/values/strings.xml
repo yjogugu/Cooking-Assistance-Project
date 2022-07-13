@@ -24,4 +24,8 @@
     <string name="network_check">네트워크가 끊겼습니다.\n네트워크 확인바랍니다.</string>
 
     <string name="date_dialog1">유통기한 설정</string>
+    <string name="date_dialog2">구입날짜 설정</string>
+    <string name="title_activity_compose">ComposeActivity</string>
+    <string name="title_activity_include_compose">IncludeCompose</string>
+    <string name="title_activity_storage_material_setting_view">StorageMaterialSettingView</string>
 </resources>

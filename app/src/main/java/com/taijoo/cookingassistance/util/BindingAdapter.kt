@@ -1,18 +1,16 @@
 package com.taijoo.cookingassistance.util
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
+import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.taijoo.cookingassistance.R
+
 
 object BindingAdapter {
 
@@ -28,7 +26,6 @@ object BindingAdapter {
 
         Glide.with(imageView.context)
             .load(IP.SERVER_IP+url)
-            .fallback(R.drawable.basics_profile)
             .apply(requestOptions)
             .into(imageView)
 

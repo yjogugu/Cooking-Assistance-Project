@@ -3,13 +3,11 @@ package com.taijoo.cookingassistance.view.storage_material
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.taijoo.cookingassistance.data.model.CookingRecipeData
 import com.taijoo.cookingassistance.data.model.StorageMaterialData
 import com.taijoo.cookingassistance.data.repository.room.dao.StorageMaterialDao
 import com.taijoo.cookingassistance.data.repository.room.repository.StorageMaterialRepository
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 
 
 class StorageMaterialPagingSource(private val storageMaterialDao : StorageMaterialDao) : PagingSource<Int ,StorageMaterialData >(){
@@ -31,6 +29,7 @@ class StorageMaterialPagingSource(private val storageMaterialDao : StorageMateri
         val position = params.key ?: INIT_PAGE_INDEX
 
         val items = storageMaterialDao.getStorageList(position,params.loadSize)
+
 
         return try {
             LoadResult.Page(

@@ -35,12 +35,12 @@ class StorageMaterialSettingActivity : AppCompatActivity() {
             titleAppbar.ivBack.visibility = View.VISIBLE
             titleAppbar.ivSearch.visibility = View.VISIBLE
             titleAppbar.ivSearch.setImageDrawable(AppCompatResources.getDrawable(this@StorageMaterialSettingActivity,R.drawable.ic_delete))
-            viewModel.seq = intent.getLongExtra("seq",0)
+//            viewModel.seq = intent.getLongExtra("seq",0)
             activity = this@StorageMaterialSettingActivity
             lifecycleOwner = this@StorageMaterialSettingActivity
         }
 
-        viewModel.getData()
+//        viewModel.getData()
 
 
         binding.titleAppbar.ivSearch.setOnClickListener {
@@ -68,7 +68,7 @@ class StorageMaterialSettingActivity : AppCompatActivity() {
         binding.constraint.isFocusableInTouchMode = true
         binding.constraint.requestFocus()
 
-        val customDateDialog = CustomDateDialog(this , viewModel.storageData.value.expiration_date)
+        val customDateDialog = CustomDateDialog(this ,getString(R.string.date_dialog1), viewModel.storageData.value.expiration_date)
 
         customDateDialog.setOnClickListener(object : CustomDateDialog.CustomCategoryDialogListener{
             override fun onOkClick(date : String) {
@@ -89,7 +89,7 @@ class StorageMaterialSettingActivity : AppCompatActivity() {
         binding.constraint.isFocusableInTouchMode = true
         binding.constraint.requestFocus()
 
-        val customDateDialog = CustomDateDialog(this , viewModel.storageData.value.date)
+        val customDateDialog = CustomDateDialog(this ,getString(R.string.date_dialog2), viewModel.storageData.value.date)
 
         customDateDialog.setOnClickListener(object : CustomDateDialog.CustomCategoryDialogListener{
             override fun onOkClick(date : String) {

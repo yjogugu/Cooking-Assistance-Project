@@ -12,7 +12,8 @@ data class StorageMaterialData(@PrimaryKey(autoGenerate = true) val seq : Long,
                                @ColumnInfo(name = "type") var type : Int,
                                @ColumnInfo(name = "note") var note : String,
                                @ColumnInfo(name = "expiration_date") var expiration_date : String,
-                               @ColumnInfo(name = "date") var date : String){
+                               @ColumnInfo(name = "date") var date : String,
+                               @ColumnInfo(name = "deleteType") var deleteType : Int){
 
-    constructor() : this(0,"",0,0,"","","")
+    constructor() : this(0,"",0,0,"","","",0)
 }

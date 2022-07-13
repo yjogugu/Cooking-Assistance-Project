@@ -1,5 +1,6 @@
 package com.taijoo.cookingassistance.view
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +9,11 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -17,10 +22,13 @@ import com.google.android.material.snackbar.Snackbar
 import com.taijoo.cookingassistance.R
 import com.taijoo.cookingassistance.databinding.ActivityMainBinding
 import com.taijoo.cookingassistance.util.NetworkState
+import com.taijoo.cookingassistance.view.cookinglist.CookingListComposeFragment
+
 import com.taijoo.cookingassistance.view.cookinglist.CookingListFragment
 import com.taijoo.cookingassistance.view.search.SearchActivity
 import com.taijoo.cookingassistance.view.storage_material.StorageMaterialFragment
-import com.taijoo.cookingassistance.view.test.TestActivity
+
+import com.taijoo.cookingassistance.view.ui.StorageMaterialSettingView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -35,10 +43,12 @@ class MainActivity : AppCompatActivity() {
     private val storageMaterialFragment = StorageMaterialFragment.newInstance()//보관중인 요리 재료
     private val cookingListFragment = CookingListFragment.newInstance()//서버에서 받아온 요리레시피 프래그먼트
 
+
     private lateinit var popup : PopupMenu
 
     private val viewModel : MainViewModel by viewModels()
 
+    @SuppressLint("ShowToast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,8 +75,8 @@ class MainActivity : AppCompatActivity() {
         binding.titleAppbar.ivSearch.setOnClickListener {
             when(binding.bottomBar.selectedIndex){
                 0->{
-                    storageMaterialFragment.setViewType(1)
                     startActivity(Intent(this,SearchActivity::class.java))
+//                    startActivity(Intent(this,StorageMaterialSettingView::class.java))
                 }
                 1->{
                     onPopupClick()

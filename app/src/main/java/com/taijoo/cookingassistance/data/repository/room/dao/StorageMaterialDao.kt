@@ -18,8 +18,13 @@ interface StorageMaterialDao {
     fun getStorage(name : String): Flow<List<StorageMaterialData>>
 
     //재료 전체 데이터 가져오기
-    @Query("SELECT * FROM StorageMaterial ORDER BY seq")
-    fun getStorage(): Flow<StorageMaterialData?>
+    @Query("SELECT * FROM StorageMaterial ORDER BY seq ASC LIMIT :loadSize , 20")
+    fun getStorage(loadSize: Int): Flow<List<StorageMaterialData>>
+
+
+    //재료 전체 데이터 가져오기
+    @Query("SELECT * FROM StorageMaterial")
+    fun getStorage(): Flow<StorageMaterialData>
 
     //추천 데이터용 재료 이름만 가져오기
     @Query("SELECT name FROM StorageMaterial WHERE type  IN (0,1) ORDER BY seq")
@@ -27,7 +32,7 @@ interface StorageMaterialDao {
 
 
     //본인이 가지고있는 재료 페이징 형태로 가져오기
-    @Query("SELECT * FROM StorageMaterial ORDER BY seq ASC LIMIT :loadSize OFFSET (:startSize-1) * :loadSize")
+    @Query("SELECT * FROM StorageMaterial WHERE deleteType = 0 ORDER BY seq ASC LIMIT :loadSize OFFSET (:startSize-1) * :loadSize")
     fun getStorageList(startSize: Int, loadSize: Int): List<StorageMaterialData>
 
 
@@ -42,5 +47,8 @@ interface StorageMaterialDao {
     //해당 항목 지우기
     @Delete
     suspend fun deleteStorageMaterial(storageMaterialData: StorageMaterialData)
+
+    @Query("UPDATE StorageMaterial SET deleteType = 1 WHERE seq = :seq")
+    suspend fun deleteStorageMaterial(seq : Long)
 
 }

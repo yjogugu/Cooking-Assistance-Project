@@ -26,7 +26,7 @@ class CookingListViewHolder(private val binding : ListItemCookingBinding) : Recy
         }
 
         binding.constraint.setOnClickListener { view->
-            onItemClickListener.onItemClick(view, data)
+            onItemClickListener.onItemClick(binding.imageView, data)
         }
 
     }
